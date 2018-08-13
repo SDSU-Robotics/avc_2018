@@ -16,7 +16,7 @@ def sensor_input():
 
 	# initialize node
 	rospy.init_node('sensor_input', anonymous=True)
-	rate = rospy.Rate(1000) # 10hz
+	rate = rospy.Rate(1000) # 1000 hz
 
 	# try to open serial ports
 	ser = [0, 0, 0]
@@ -54,11 +54,12 @@ def sensor_input():
 					Dist_L = ser[i].read()
 					Dist_H = ser[i].read()
 					distance[i] = (ord(Dist_H) * 256) + (ord(Dist_L))
+
 					# discard remaining 5 bytes
 					for j in range (0,5):
 						ser[i].read()
                 
-			rospy.loginfo("LIDAR%d: %d", i, distance[i])
+			#rospy.loginfo("LIDAR%d: %d", i, distance[i])
 			pub[i].publish(distance[i])
 		rate.sleep()
 
