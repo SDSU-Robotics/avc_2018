@@ -5,14 +5,15 @@ import rospy
 from std_msgs.msg import UInt16
 
 # other imports
+import constants
 import serial
 import time
 
 def sensor_input():
 	# create publishers
-	pub = [rospy.Publisher('LIDAR0', UInt16, queue_size=10),
-		rospy.Publisher('LIDAR1', UInt16, queue_size=10),
-		rospy.Publisher('LIDAR2', UInt16, queue_size=10)]
+	pub = [rospy.Publisher(constants.LIDAR0_PORT, UInt16, queue_size=10),
+		rospy.Publisher(constants.LIDAR1_PORT, UInt16, queue_size=10),
+		rospy.Publisher(constants.LIDAR2_PORT, UInt16, queue_size=10)]
 
 	# initialize node
 	rospy.init_node('sensor_input', anonymous=True)
