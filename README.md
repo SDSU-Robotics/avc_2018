@@ -21,3 +21,15 @@ To create a branch, run
 `git checkout -b BRANCH-NAME`
 
 Make sure you are branching from the branch you want to be branching from! Checkout master first before creating your branch (unless you actually want to branch off another branch).
+
+Once you're in whatever branch you want to be in run
+
+'catkin_make'
+
+You only have to do this when new files are introduced (unless you need to compile C++ code). If you opened a terminal before running 'catkin_make', you'll have to source your workspace manually (new terminals should source it automatically now).
+
+'source ~/.bashrc'
+
+bashrc should have a command to source your workspace in there. If that doesn't work, you can do it manually:
+
+'source ~/catkin_ws/devel/setup.bash'
