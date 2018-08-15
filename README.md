@@ -24,12 +24,12 @@ Make sure you are branching from the branch you want to be branching from! Check
 
 Once you're in whatever branch you want to be in run
 
-'catkin_make'
+`catkin_make`
 
-You only have to do this when new files are introduced (unless you need to compile C++ code). If you opened a terminal before running 'catkin_make', you'll have to source your workspace manually (new terminals should source it automatically now).
+You only have to do this when new files are introduced (unless you need to compile C++ code). If you opened a terminal before running `catkin_make`, you'll have to source your workspace manually (new terminals should source it automatically now).
 
-'source ~/.bashrc'
+`source ~/.bashrc`
 
 bashrc should have a command to source your workspace in there. If that doesn't work, you can do it manually:
 
-'source ~/catkin_ws/devel/setup.bash'
+`source ~/catkin_ws/devel/setup.bash`
