@@ -6,6 +6,16 @@ LIDAR2_PORT = "/dev/ttyUSB2"
 
 XBEE_PORT = "/dev/ttyUSB3"
 
+# Motor labeling convention:
+
+#    Front
+#   0     1
+
+#   2     3
+
+#   4     5
+
+MOTOR_QUANTITY = 6
 WHEEL_PWM_PINS = [26, 18, 20, 21, 22, 23]
 WHEEL_DIR_PINS = [5, 7, 16, 19, 12, 13]
 

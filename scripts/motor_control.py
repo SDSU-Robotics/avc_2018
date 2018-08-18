@@ -4,6 +4,7 @@ import pigpio
 from std_msgs.msg import Float64
 import math
 import serial
+import constants
 
 
 # Motor labeling convention:
@@ -14,10 +15,6 @@ import serial
 #   2     3
 
 #   4     5
-
-MOTOR_QUANTITY = 6
-PWM_PINS = [26, 18, 20, 21, 22, 23]
-DIR_PINS = [5, 7, 16, 19, 12, 13]
 
 class Motor:
     def __init__(self, pi, pwm, dirPin):
@@ -46,16 +43,16 @@ class Motor:
 class Listener:
     def __init__(self, pi):
         self.motors = []
-        for i in range(0, MOTOR_QUANTITY):
-            self.motors.append(Motor(pi, PWM_PINS[i], DIR_PINS[i]))
+        for i in range(0, constants.MOTOR_QUANTITY):
+            self.motors.append(Motor(pi, constants.PWM_PINS[i], constants.DIR_PINS[i]))
             self.motors[i].setSpeed(0)
 
     def lCallback(self, l_speed):
-        for i in range(0, MOTOR_QUANTITY, 2):
+        for i in range(0, constants.MOTOR_QUANTITY, 2):
             self.motors[i].setSpeed(l_speed.data)
 
     def rCallback(self, r_speed):
-        for i in range(1, MOTOR_QUANTITY, 2):
+        for i in range(1, constants.MOTOR_QUANTITY, 2):
             self.motors[i].setSpeed(r_speed.data)
 
 def motor_control():
