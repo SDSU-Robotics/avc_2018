@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 from __future__ import division
 import cv2
@@ -68,7 +68,7 @@ def find_strawberry(image):
 	mask_clean = cv2.morphologyEx(mask_closed, cv2.MORPH_OPEN, kernel)
 	#dialation followed by erosion
 	#Step 6. Find the biggest strawberry
-	
+
 	big_strawberry_contour = find_biggest_contour(mask_clean)
 	mask_strawberries = find_biggest_contour(mask_clean)
 	
@@ -84,7 +84,7 @@ def find_strawberry(image):
 	return bgr
 
 
-image = cv2.imread('straw.jpeg')
+image = cv2.imread('straw.jpg', 1)
 result = find_strawberry(image)
-cv2.imwrite('straw2.jpeg', result)
+cv2.imwrite('straw2.jpg', result)
 
