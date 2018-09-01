@@ -21,7 +21,7 @@ class Listener:
 
 def teleop():
 	rospy.init_node('teleop', anonymous=True)
-	rate = rospy.Rate(1000) # 1khz
+	rate = rospy.Rate(50) # 50 hz
 
 	listener = Listener()
 	buttons = [0] * 12
