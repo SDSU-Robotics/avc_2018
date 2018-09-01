@@ -26,7 +26,7 @@ class Motor:
 
     def setSpeed(self, speed):
         speed = speed * 255
-
+#	rospy.loginfo("Speed: %f", speed)
         if speed > 0:
             self.pi.write(self.dirPin, 1)
 
@@ -44,12 +44,13 @@ class Listener:
     def __init__(self, pi):
         self.motors = []
         for i in range(0, constants.MOTOR_QUANTITY):
-            self.motors.append(Motor(pi, constants.PWM_PINS[i], constants.DIR_PINS[i]))
+            self.motors.append(Motor(pi, constants.WHEEL_PWM_PINS[i], constants.WHEEL_DIR_PINS[i]))
             self.motors[i].setSpeed(0)
 
     def lCallback(self, l_speed):
         for i in range(0, constants.MOTOR_QUANTITY, 2):
-            self.motors[i].setSpeed(l_speed.data)
+            rospy.loginfo("L Speed %f", l_speed.data)
+	    self.motors[i].setSpeed(l_speed.data)
 
     def rCallback(self, r_speed):
         for i in range(1, constants.MOTOR_QUANTITY, 2):
@@ -66,7 +67,8 @@ def motor_control():
 
     rospy.Subscriber("r_speed", Float64, listener.rCallback)
     rospy.Subscriber("l_speed", Float64, listener.lCallback)
-
+   
+	
     rospy.spin()
 
 if __name__ == '__main__':
