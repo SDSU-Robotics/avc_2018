@@ -33,3 +33,19 @@ You only have to do this when new files are introduced (unless you need to compi
 bashrc should have a command to source your workspace in there. If that doesn't work, you can do it manually:
 
 `source ~/catkin_ws/devel/setup.bash`
+
+Running ROS on multiple computers
+ROS needs the IP of the host computer and the slave
+Enter this on the master computer (Raspberry Pi)
+`export ROS_MASTER=http://localhost:11311/`
+`export ROS_HOSTNAME=10.42.0.1`
+`export ROS_IP=10.42.0.1`
+
+Enter this on the slave computer (laptop) 
+Change the IP address to the computers IP
+`export ROS_MASTER=http://10.42.0.1:11311/`
+`export ROS_HOSTNAME=10.42.0.xx`
+`export ROS_IP=10.42.0.xx`
+
+
+
