@@ -4,6 +4,7 @@ import serial
 import rospy # Import for ROS Python
 from std_msgs.msg import String # For XBee messages
 from std_msgs.msg import Float64 # For motor_control messages
+from std_msgs.msg import Bool # for task_complete
 import time
 
 
@@ -11,6 +12,7 @@ class Listener:
     def __init__(self):
         self.l_pub = rospy.Publisher('start_l_speed', Float64, queue_size=10)
         self.r_pub = rospy.Publisher('start_r_speed', Float64, queue_size=10)
+        self.complete_pub = rospy.Publisher('task_complete', Bool, queue_size=10)
 
     def callback(self, message):
 
@@ -31,6 +33,7 @@ class Listener:
             # After 3 seconds stop moving
             self.l_pub.publish(0.0)
             self.r_pub.publish(0.0)
+            self.complete_pub.publish(True)
 
 def start():
 
