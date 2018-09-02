@@ -16,8 +16,8 @@ XBEE_PORT = "/dev/ttyUSB3"
 #   4     5
 
 MOTOR_QUANTITY = 6
-WHEEL_PWM_PINS = [26, 18, 20, 21, 22, 23]
-WHEEL_DIR_PINS = [5, 7, 16, 19, 12, 13]
+WHEEL_PWM_PINS = [8, 25, 27, 23, 15, 14]
+WHEEL_DIR_PINS = [7, 11, 18, 22, 17, 4]
 
 EMAG_FIN_PIN = 8 #arbitrary
 EMGA_RIN_PIN = 24 #arbitrary
