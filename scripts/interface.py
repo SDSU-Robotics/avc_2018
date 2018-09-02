@@ -2,6 +2,7 @@
 from __future__ import print_function # for print without newline
 import rospy # for all things ROS
 from std_msgs.msg import Float64 # for motor speed messages
+from std_msgs.msg import Bool # for task_complete
 from sensor_msgs.msg import Joy # for game controller messages
 import subprocess # for shell commands
 
@@ -37,6 +38,7 @@ class Listener:
 
 		if joy.buttons[1] == True: # X
 			self.mode = self.select
+			self.task_complete = False
 
 		if joy.buttons[9] == True: # Start
 			self.mode = Mode.TELEOP
@@ -74,6 +76,12 @@ class Listener:
 	def transport_r_speed_callback(self, transport_r_speed):
 		if self.mode == Mode.TRANSPORT:
 			self.r_pub.publish(transport_r_speed.data)
+
+	def task_complete_callback(self, msg):
+		if msg:
+			self.task_complete = True
+			self.mode = Mode.TELEOP
+
 
 
 def printMenu(mode, select):
@@ -114,6 +122,9 @@ def interface():
 	# transport node
 	rospy.Subscriber('transport_l_speed', Float64, listener.transport_l_speed_callback)
 	rospy.Subscriber('transport_r_speed', Float64, listener.transport_r_speed_callback)
+
+	# Task Complete topic
+	rospy.Subscriber('task_complete', Bool, listener.task_complete_callback)
 	
 	rospy.spin()
 
