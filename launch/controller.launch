@@ -1,0 +1,7 @@
+<launch>
+	<node name="interface" pkg="avc_2018" type="interface.py" output="screen" launch-prefix="gnome-terminal --command" />
+	<node name="start_task" pkg="avc_2018" type="start_task.py"/>
+	<node name="teleop" pkg="avc_2018" type="teleop.py"  />
+	<node name="joy" pkg="joy" type="joy_node" output="screen" launch-prefix="gnome-terminal --command" />
+<<!-->	<node name="LSpeed" pkg="rostopic" type="echo" output="screen" args="/l_speed" launch-prefix="gnome-terminal --command" /> <-->
+</launch>
