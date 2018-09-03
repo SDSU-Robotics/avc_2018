@@ -2,6 +2,7 @@
 import rospy
 import pigpio
 from std_msgs.msg import Float64
+from std_msgs.msg import Uint16
 import math
 import serial
 import constants
@@ -25,6 +26,27 @@ class Servo:
         rospy.loginfo("Pin %d PWM Val: %f", self.pin, pos)
         self.pi.set_PWM_dutycycle(self.pin, pos)
 
+class Emag:
+    def __init__(self, pi, push_pin, pull_pin):
+        self.pi = pi
+        self.push_pin = push_pin
+        self.pull_pin = pull_pin
+        self.pi.set_mode(self.push_pin, pigpio.OUTPUT)
+        self.pi.set_mode(self.pull_pin, pigpio.OUTPUT)
+
+    def push():
+        self.pi.write(pi,self.pull_pin, 0)
+        self.pi.write(pi,self.push_pin, 1)
+
+    def pull():
+        self.pi.write(pi,self.pull_pin, 1)
+        self.pi.write(pi,self.push_pin, 0)
+
+    def off():
+        self.pi.write(pi,self.push_pin, 0)
+        self.pi.write(pi,self.pull_pin, 0)
+
+    
 class Listener:
     def __init__(self, pi):
         self.base = Servo(pi, constants.BASE_PIN)
@@ -35,6 +57,8 @@ class Listener:
         self.joint0.setPosition(constants.JOINT0_START_POS)
         self.joint1.setPosition(constants.JOINT1_START_POS)
 
+        self.off()
+
     def baseCallback(self, base_pos):
         self.base.setPosition(base_pos.data)
 
@@ -43,6 +67,16 @@ class Listener:
 
     def joint1Callback(self, joint1_pos):
         self.joint1.setPosition(joint1_pos.data)
+
+    def emagCallback(self, emag):
+        if emag==0:
+            self.off()
+
+        if emag==1:
+            self.pull()
+
+        if emag==2:
+            self.push()  
 
 def motor_control():
     rospy.init_node('motor_control', anonymous = True)
@@ -56,6 +90,7 @@ def motor_control():
     rospy.Subscriber("base_pos", Float64, listener.baseCallback)
     rospy.Subscriber("joint1_pos", Float64, listener.joint0Callback)
     rospy.Subscriber("joint0_pos", Float64, listener.joint1Callback)
+    rospy.Subscriber("emag", Uint16, listener.emagCallback)
 
     rospy.spin()
 

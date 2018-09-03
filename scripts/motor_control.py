@@ -49,8 +49,7 @@ class Listener:
 
     def lCallback(self, l_speed):
         for i in range(0, constants.MOTOR_QUANTITY, 2):
-            rospy.loginfo("L Speed %f", l_speed.data)
-	    self.motors[i].setSpeed(l_speed.data)
+	        self.motors[i].setSpeed(l_speed.data)
 
     def rCallback(self, r_speed):
         for i in range(1, constants.MOTOR_QUANTITY, 2):
