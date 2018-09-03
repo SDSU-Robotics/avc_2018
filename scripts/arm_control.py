@@ -33,6 +33,8 @@ class Emag:
         self.pull_pin = pull_pin
         self.pi.set_mode(self.push_pin, pigpio.OUTPUT)
         self.pi.set_mode(self.pull_pin, pigpio.OUTPUT)
+        self.off()
+
 
     def push():
         self.pi.write(pi,self.pull_pin, 0)
@@ -57,7 +59,8 @@ class Listener:
         self.joint0.setPosition(constants.JOINT0_START_POS)
         self.joint1.setPosition(constants.JOINT1_START_POS)
 
-        self.off()
+        self.emag = Emag(pi, constants.EMAG_PUSH_PIN, constants.EMAG_PULL_PIN)
+
 
     def baseCallback(self, base_pos):
         self.base.setPosition(base_pos.data)
