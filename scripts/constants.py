@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 
-LIDAR_PORT = "/dev/ttyUSB0"
-#LIDAR1_PORT = "/dev/ttyUSB1"
-#LIDAR2_PORT = "/dev/ttyUSB2"
-
+LIDAR_PORT = '/dev/ttyUSB0'
 XBEE_PORT = '/dev/ttyUSB1'
 
 # Motor labeling convention:
