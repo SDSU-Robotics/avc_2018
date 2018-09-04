@@ -2,7 +2,7 @@
 import rospy
 import pigpio
 from std_msgs.msg import Float64
-from std_msgs.msg import Uint16
+from std_msgs.msg import UInt8
 import math
 import serial
 import constants
@@ -36,17 +36,17 @@ class Emag:
         self.off()
 
 
-    def push():
-        self.pi.write(pi,self.pull_pin, 0)
-        self.pi.write(pi,self.push_pin, 1)
+    def push(self):
+        self.pi.write(self.pull_pin, 0)
+        self.pi.write(self.push_pin, 1)
 
-    def pull():
-        self.pi.write(pi,self.pull_pin, 1)
-        self.pi.write(pi,self.push_pin, 0)
+    def pull(self):
+        self.pi.write(self.pull_pin, 1)
+        self.pi.write(self.push_pin, 0)
 
-    def off():
-        self.pi.write(pi,self.push_pin, 0)
-        self.pi.write(pi,self.pull_pin, 0)
+    def off(self):
+        self.pi.write(self.push_pin, 0)
+        self.pi.write(self.pull_pin, 0)
 
     
 class Listener:
@@ -93,7 +93,7 @@ def motor_control():
     rospy.Subscriber("base_pos", Float64, listener.baseCallback)
     rospy.Subscriber("joint1_pos", Float64, listener.joint0Callback)
     rospy.Subscriber("joint0_pos", Float64, listener.joint1Callback)
-    rospy.Subscriber("emag", Uint16, listener.emagCallback)
+    rospy.Subscriber("emag", UInt8, listener.emagCallback)
 
     rospy.spin()
 
