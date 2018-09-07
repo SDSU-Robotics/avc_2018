@@ -27,26 +27,34 @@ class Servo:
         self.pi.set_PWM_dutycycle(self.pin, pos)
 
 class Emag:
-    def __init__(self, pi, push_pin, pull_pin):
+    def __init__(self, pi, in1, in2):
         self.pi = pi
-        self.push_pin = push_pin
-        self.pull_pin = pull_pin
-        self.pi.set_mode(self.push_pin, pigpio.OUTPUT)
-        self.pi.set_mode(self.pull_pin, pigpio.OUTPUT)
+        self.in1 = in1
+        self.in2 = in2
+        self.pi.set_mode(self.in1, pigpio.OUTPUT)
+        self.pi.set_mode(self.in2, pigpio.OUTPUT)
         self.off()
 
-
-    def push(self):
-        self.pi.write(self.pull_pin, 0)
-        self.pi.write(self.push_pin, 1)
+    def off(self):
+        self.pi.write(self.in1, 1)
+        self.pi.write(self.in2, 0)
+	print("off")
 
     def pull(self):
-        self.pi.write(self.pull_pin, 1)
-        self.pi.write(self.push_pin, 0)
+	# -12V
+        self.pi.write(self.in1, 0)
+        self.pi.write(self.in2, 1)
+	print("pull")
 
-    def off(self):
-        self.pi.write(self.push_pin, 0)
-        self.pi.write(self.pull_pin, 0)
+    def push(self):
+	# +12V
+        self.pi.write(self.in1, 0)
+        self.pi.write(self.in2, 0)
+	print("push")
+
+
+
+
 
     
 class Listener:
@@ -59,7 +67,7 @@ class Listener:
         self.joint0.setPosition(constants.JOINT0_START_POS)
         self.joint1.setPosition(constants.JOINT1_START_POS)
 
-        self.emag = Emag(pi, constants.EMAG_PUSH_PIN, constants.EMAG_PULL_PIN)
+        self.emag = Emag(pi, constants.EMAG_IN1_PIN, constants.EMAG_IN2_PIN)
 
 
     def baseCallback(self, base_pos):
@@ -71,15 +79,19 @@ class Listener:
     def joint1Callback(self, joint1_pos):
         self.joint1.setPosition(joint1_pos.data)
 
-    def emagCallback(self, emag):
-        if emag==0:
-            self.off()
+    def emagCallback(self, value):
+        print("emagCallback")
+        if value.data == 0:
+            print(0)
+            self.emag.off()
 
-        if emag==1:
-            self.pull()
+        if value.data == 1:
+            print(1)
+            self.emag.pull()
 
-        if emag==2:
-            self.push()  
+        if value.data == 2:
+            print(2)
+            self.emag.push()
 
 def motor_control():
     rospy.init_node('motor_control', anonymous = True)
