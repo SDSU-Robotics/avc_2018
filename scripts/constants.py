@@ -21,3 +21,10 @@ WHEEL_DIR_PINS = [5, 7, 16, 19, 12, 13]
 
 EMAG_FIN_PIN = 8 #arbitrary
 EMGA_RIN_PIN = 24 #arbitrary
+
+# Computer vision
+IPP = 0.017188
+IMAGE_W = 1280
+IMAGE_H = 960
+A = 1
+B = -1

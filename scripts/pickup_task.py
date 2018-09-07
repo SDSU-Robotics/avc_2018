@@ -6,16 +6,17 @@ roslib.load_manifest('avc_2018')
 import sys
 import rospy
 import cv2
-import matplotlib.pyplot as plt
+import constants
+#import matplotlib.pyplot as plt
 from std_msgs.msg import String
 from sensor_msgs.msg import CompressedImage
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
+import math
 
-SHOW_INTERMEDIATE = False
+#import constants
 
 class image_converter:
-
   def __init__(self):
     self.image_pub = rospy.Publisher("image_topic_2",Image, queue_size=10)
 
@@ -23,6 +24,7 @@ class image_converter:
     self.image_sub = rospy.Subscriber("raw_image",Image,self.callback)
 
   def callback(self,data):
+
     try:
       cv_image = self.bridge.imgmsg_to_cv2(data, "bgr8")
     except CvBridgeError as e:
@@ -34,31 +36,24 @@ class image_converter:
      # cv2.circle(cv_image, (700,300), 250, 255)
 
     #OpenCV uses BGR so we need band 3 for the red band
-    gray = cv_image[:,:,2]
+    #redimg = cv_image[:,:,2]
+    #red = cv2.cvtColor(redimg, cv2.COLOR_BGR2GRAY)
+    #blueGreen = cv2.cvtColor(cv_image[2,2,:], cv2.COLOR_BGR2GRAY)
+
+    red = cv_image[:,:,2]
+
+    #blueGreen = cv2.bitwise_or(b, g)
     #Blur the image to remove noise. GaussainBlur(src, ksize, sigmaX)
-    blurred = cv2.GaussianBlur(gray, (11,11), 0)
+    blurred = cv2.GaussianBlur(red, (11,11), 0)
+    #blurredBG = cv2.GaussianBlur(blueGreen, (11,11), 0)
 
-    #set threshold
     thresh = cv2.threshold(blurred, 220, 255, cv2.THRESH_TOZERO)[1]
+    #threshBG = cv2.threshold(blurredBG, 150, 255, cv2.THRESH_TOZERO)[1]
 
-    if SHOW_INTERMEDIATE:
-      i = 0
-      plt.figure(100*(i+1)+1)
+    #thresh = cv2.bitwise_not(threshBG)
 
-      plt.imshow(cv_image[...,::-1])
-      plt.title('Original Image')
-
-      plt.figure(100*(i+1)+2)
-      plt.imshow(gray, cmap='gray')
-      plt.title('Red Band of Image')
-
-      plt.figure(100*(i+1)+3)
-      plt.imshow(blurred, cmap='gray')
-      plt.title('Blurred Image')
-
-      plt.figure(100*(i+1)+4)
-      plt.imshow(thresh, cmap='gray')
-      plt.title('Thresholded Image')
+    #thresh = cv2.bitwise_and(threshBG_inv, threshR)
+    #thresh = cv2.addWeighted(threshR, 1, threshBG, -1, 0)
 
     #Find contours in the image
     contours = cv2.findContours(thresh.copy(), #Need to copy the image
@@ -72,13 +67,18 @@ class image_converter:
 
     M = cv2.moments(c)
     try:
+        # calculate center
         cX = int(M["m10"] / M["m00"])
         cY = int(M["m01"] / M["m00"])
+
+        # calculate phi
+        V = (cX - (constants.IMAGE_W/2)) * constants.IPP
+        PHI = (math.atan(V/9.5))
 
         #draw the contour and center of the shape on the image
         cv2.drawContours(cv_image, [c], -1, (0, 255, 0), 2)
         cv2.circle(cv_image, (cX, cY), 7, (0, 255, 0), -1)
-        cv2.putText(cv_image, "center", (cX - 20, cY - 20),
+        cv2.putText(cv_image, "Phi: " + str(PHI*180/3.1415926) + " deg", (cX - 20, cY - 20),
         cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 
         #show the image
