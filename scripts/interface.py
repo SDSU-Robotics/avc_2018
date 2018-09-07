@@ -2,13 +2,14 @@
 from __future__ import print_function # for print without newline
 import rospy # for all things ROS
 from std_msgs.msg import Float64 # for motor speed messages
+from std_msgs.msg import UInt8 # for Emag message
 from std_msgs.msg import Bool # for task_complete
 from sensor_msgs.msg import Joy # for game controller messages
 import subprocess # for shell commands
 
 
 # strings for menu
-MODE_STRINGS = ["0. Teleop", "1. Start", "2. Pickup", "3. Transport"]
+MODE_STRINGS = ["0. Teleop", "1. Start", "2. Pickup"]
 
 class Mode:
 	TELEOP = 0
@@ -21,7 +22,11 @@ class Listener:
 	def __init__(self):
 		self.l_pub = rospy.Publisher('l_speed', Float64, queue_size=10)
 		self.r_pub = rospy.Publisher('r_speed', Float64, queue_size=10)
-
+		self.z_pub = rospy.Publisher('z', Float64, queue_size=10)
+		self.phi_pub = rospy.Publisher('phi', Float64, queue_size=10)
+		self.rho_pub = rospy.Publisher('rho', Float64, queue_size=10)
+		self.emag_pub = rospy.Publisher('emag', UInt8, queue_size=10)
+		
 		self.mode = Mode.TELEOP
 		self.select = Mode.TELEOP
 
@@ -36,7 +41,7 @@ class Listener:
 			self.select += 1
 			if self.select >= len(MODE_STRINGS): self.select = len(MODE_STRINGS) - 1
 
-		if joy.buttons[1] == True: # X
+		if joy.buttons[8] == True: # X
 			self.mode = self.select
 			self.task_complete = False
 
@@ -52,6 +57,18 @@ class Listener:
 	def teleop_r_speed_callback(self, teleop_r_speed):
 		if self.mode == Mode.TELEOP:
 			self.r_pub.publish(teleop_r_speed.data)
+	def teleop_z_callback(self, teleop_z):
+		if self.mode == Mode.TELEOP:
+			self.z_pub.publish(teleop_z.data)
+	def teleop_phi_callback(self, teleop_phi):
+		if self.mode == Mode.TELEOP:
+			self.phi_pub.publish(teleop_phi.data)
+	def teleop_rho_callback(self, teleop_rho):
+		if self.mode == Mode.TELEOP:
+			self.rho_pub.publish(teleop_rho.data)
+	def teleop_emag_callback(self, teleop_emag):
+		if self.mode == Mode.TELEOP:
+			self.emag_pub.publish(teleop_emag.data)
 
 	# start
 	def start_l_speed_callback(self, start_l_speed):
@@ -60,7 +77,7 @@ class Listener:
 	def start_r_speed_callback(self, start_r_speed):
 		if self.mode == Mode.START:
 			self.r_pub.publish(start_r_speed.data)
-
+	
 	# pickup
 	def pickup_l_speed_callback(self, pickup_l_speed):
 		if self.mode == Mode.PICKUP:
@@ -70,12 +87,12 @@ class Listener:
 			self.r_pub.publish(pickup_r_speed.data)
 
 	# trasport
-	def transport_l_speed_callback(self, transport_l_speed):
-		if self.mode == Mode.TRANSPORT:
-			self.l_pub.publish(transport_l_speed.data)
-	def transport_r_speed_callback(self, transport_r_speed):
-		if self.mode == Mode.TRANSPORT:
-			self.r_pub.publish(transport_r_speed.data)
+	#def transport_l_speed_callback(self, transport_l_speed):
+	#	if self.mode == Mode.TRANSPORT:
+	#		self.l_pub.publish(transport_l_speed.data)
+	#def transport_r_speed_callback(self, transport_r_speed):
+	#	if self.mode == Mode.TRANSPORT:
+	#		self.r_pub.publish(transport_r_speed.data)
 
 	def task_complete_callback(self, msg):
 		if msg:
@@ -110,6 +127,10 @@ def interface():
 	# teleop node
 	rospy.Subscriber('teleop_l_speed', Float64, listener.teleop_l_speed_callback)
 	rospy.Subscriber('teleop_r_speed', Float64, listener.teleop_r_speed_callback)
+	rospy.Subscriber('teleop_emag', UInt8, listener.teleop_emag_callback)
+	rospy.Subscriber('teleop_rho', Float64, listener.teleop_rho_callback)
+	rospy.Subscriber('teleop_phi', Float64, listener.teleop_phi_callback)
+	rospy.Subscriber('teleop_z', Float64, listener.teleop_z_callback)
 
 	# start node
 	rospy.Subscriber('start_l_speed', Float64, listener.start_l_speed_callback)
@@ -120,8 +141,8 @@ def interface():
 	rospy.Subscriber('pickup_r_speed', Float64, listener.pickup_r_speed_callback)
 
 	# transport node
-	rospy.Subscriber('transport_l_speed', Float64, listener.transport_l_speed_callback)
-	rospy.Subscriber('transport_r_speed', Float64, listener.transport_r_speed_callback)
+	#rospy.Subscriber('transport_l_speed', Float64, listener.transport_l_speed_callback)
+	#rospy.Subscriber('transport_r_speed', Float64, listener.transport_r_speed_callback)
 
 	# Task Complete topic
 	rospy.Subscriber('task_complete', Bool, listener.task_complete_callback)
