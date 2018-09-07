@@ -14,7 +14,7 @@ def xbee_message():
     rate = rospy.Rate(1000)
 
     # try to open serial ports
-    try: ser = serial.Serial(constants.XBEE_PORT, 9600, timeout = .1)
+    try: ser = serial.Serial(constants.XBEE_PORT, 115200, timeout = .1)
     except: rospy.logerr("Failed to open %s", constants.XBEE_PORT)    
 
     i = 0
